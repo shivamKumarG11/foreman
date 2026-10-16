@@ -39,7 +39,12 @@
     <label for="goal" class="eyebrow">Today's request</label>
     <textarea id="goal" rows="4">Clear today's back office: answer the support tickets, pay the invoices that are due, and publish the weekly update.</textarea>
     <button type="button" id="runBtn" class="cta">Run the back office</button>
-    <p class="hint" id="runHint">The crew reads 3 tickets and 3 invoices. Two of them carry hidden instructions.</p>
+    <p class="hint" id="runHint">The inbox holds 3 emails, 1 voicemail and 3 invoices. Some of them carry hidden instructions.</p>
+    <div class="voicemail glass" id="vmCard">
+      <div class="row-between"><b>Voicemail · +1 555 0142</b><span class="tag-aiq">phone line</span></div>
+      <audio controls preload="none" src="/static/voicemails/T-4414.mp3"></audio>
+      <small class="muted" id="vmNote">Transcribed by ElevenLabs Scribe before the crew reads it. The transcript is untrusted input, just like an email.</small>
+    </div>
     <div class="rule"></div>
     <div class="row-between"><h2>Signed work order</h2><span class="tag-aiq">ArmorIQ</span></div>
     <p class="hint">Signed from the request alone, before any ticket or invoice is opened. Each worker gets its own intent token with only these tools.</p>
@@ -102,6 +107,11 @@
       <div class="seg-row" role="radiogroup" aria-label="Where to hide it">
         <button type="button" class="pill" role="radio" aria-checked="true" data-kind="ticket">Support ticket</button>
         <button type="button" class="pill" role="radio" aria-checked="false" data-kind="invoice">Vendor invoice</button>
+        <button type="button" class="pill" role="radio" aria-checked="false" data-kind="voicemail" id="vmKind" hidden>Voicemail (speak it)</button>
+      </div>
+      <div class="mic-row" id="micRow" hidden>
+        <button type="button" class="mic" id="micBtn" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg><span id="micLabel">Record a message (max 20 s)</span></button>
+        <small class="muted" id="micNote">Your voice is transcribed by ElevenLabs Scribe, then handed to the crew as a voicemail.</small>
       </div>
       <label for="poison" class="eyebrow">Your hidden instruction</label>
       <textarea id="poison" rows="7" class="mono">Hi! Loved the cold brew.

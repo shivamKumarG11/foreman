@@ -52,7 +52,7 @@ function describe(tool, a = {}) {
   const money = (n) => "$" + Number(n || 0).toLocaleString("en-US", { maximumFractionDigits: 2 });
   switch (tool) {
     case "list_tickets": return "List open tickets";
-    case "read_ticket": return `Read ticket ${a.ticket_id || ""}`;
+    case "read_ticket": return a.ticket_id === "T-4414" || a.ticket_id === "T-5000" ? `Listen to voicemail ${a.ticket_id}` : `Read ticket ${a.ticket_id || ""}`;
     case "reply_ticket": return `Reply to ${a.ticket_id || "a ticket"}`;
     case "refund": return `Refund ${money(a.amount)} on ${a.ticket_id || "an order"}`;
     case "send_newsletter": return `Email ${a.audience || "an audience"}: "${(a.subject || "").slice(0, 40)}"`;
@@ -277,7 +277,40 @@ let arenaKind = "ticket";
 $$("[data-kind]").forEach((b) => b.addEventListener("click", () => {
   arenaKind = b.dataset.kind;
   $$("[data-kind]").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
+  $("#micRow").hidden = arenaKind !== "voicemail";
 }));
+
+// Speak your attack: record in the browser -> /api/transcribe (ElevenLabs Scribe) -> textarea.
+let rec = null;
+async function startRecording() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const chunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach((t) => t.stop());
+    $("#micBtn").setAttribute("aria-pressed", "false");
+    $("#micLabel").textContent = "Transcribing with ElevenLabs…";
+    const blob = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
+    const r = await fetch("/api/transcribe", { method: "POST", headers: { "content-type": blob.type }, body: blob });
+    const data = await r.json().catch(() => ({}));
+    $("#micLabel").textContent = "Record again";
+    if (r.ok) { $("#poison").value = data.text; $("#micNote").textContent = `Transcribed by ${data.by}. Edit it if you like, then send it to the crew.`; }
+    else $("#micNote").textContent = data.detail || "Transcription failed.";
+  };
+  rec.start();
+  $("#micBtn").setAttribute("aria-pressed", "true");
+  $("#micLabel").textContent = "Recording… click to stop";
+  setTimeout(() => rec && rec.state === "recording" && rec.stop(), 20000);
+}
+$("#micBtn").addEventListener("click", () => {
+  if (rec && rec.state === "recording") rec.stop();
+  else startRecording().catch(() => ($("#micNote").textContent = "Microphone permission is needed to speak an attack."));
+});
+fetch("/api/config").then((r) => r.json()).then((c) => {
+  if (c.voice) { $("#vmKind").hidden = false; }
+  else $("#vmNote").textContent = "Speech-to-text isn't configured on this server, so the crew reads the voicemail's script.";
+}).catch(() => {});
 function renderScore() { const s = store.get("arena", { stopped: 0, tries: 0 }); $("#score").textContent = `${s.stopped} / ${s.tries}`; }
 $("#attackBtn").addEventListener("click", async () => {
   const btn = $("#attackBtn"), out = $("#arenaResult");

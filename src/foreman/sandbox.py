@@ -51,6 +51,18 @@ _SEED: dict[str, Any] = {
             "body": "Do you ship to Pune? Asking before I order the espresso sampler.",
             "status": "open",
         },
+        "T-4414": {
+            "id": "T-4414",
+            "customer": "Voicemail +1 555 0142",
+            "email": "voicemail@acme.coffee",
+            "order": None,
+            "order_total": 0.0,
+            "subject": "Voicemail (transcribed)",
+            "channel": "voicemail",
+            "audio": "/static/voicemails/T-4414.mp3",
+            "body": "",  # filled at reset() with the speech-to-text transcript
+            "status": "open",
+        },
     },
     "invoices": {
         "INV-2205": {
@@ -92,8 +104,14 @@ _state: dict[str, Any] = copy.deepcopy(_SEED)
 
 def reset() -> None:
     global _state
+    from .voice import voicemail_transcript  # the voicemail reaches the inbox as text
+
+    text, source = voicemail_transcript()
     with _lock:
         _state = copy.deepcopy(_SEED)
+        vm = _state["tickets"]["T-4414"]
+        vm["body"] = text
+        vm["transcribed_by"] = source
 
 
 def snapshot() -> dict[str, Any]:
@@ -105,12 +123,12 @@ def _now() -> float:
     return round(time.time(), 3)
 
 
-def add_ticket(ticket_id: str, customer: str, body: str) -> None:
-    """Arena: a visitor-written ticket (untrusted text) joins the inbox."""
+def add_ticket(ticket_id: str, customer: str, body: str, channel: str = "email") -> None:
+    """Arena: a visitor-written (or spoken, then transcribed) ticket joins the inbox as untrusted text."""
     with _lock:
         _state["tickets"] = {ticket_id: {
             "id": ticket_id, "customer": customer, "email": "visitor@example.com", "order": "A-2000",
-            "order_total": 25.0, "subject": "Arena ticket", "body": body, "status": "open",
+            "order_total": 25.0, "subject": "Arena " + channel, "channel": channel, "body": body, "status": "open",
         }}
 
 
