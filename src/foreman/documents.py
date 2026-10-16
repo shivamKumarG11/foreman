@@ -43,3 +43,17 @@ def read_document(data: bytes, mime: str) -> str:
         ]}],
     )
     return (r.choices[0].message.content or "").strip()
+
+
+_cache: dict[str, str] = {}
+
+
+def read_file_cached(path: str) -> str:
+    """Transcribe a document on disk once per process (the office inbox's invoices)."""
+    if path not in _cache:
+        from pathlib import Path
+
+        p = Path(path)
+        mime = "application/pdf" if p.suffix == ".pdf" else "image/png"
+        _cache[path] = read_document(p.read_bytes(), mime)
+    return _cache[path]

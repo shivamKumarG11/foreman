@@ -101,9 +101,15 @@ async function loadInbox() {
   for (const it of items) {
     const li = document.createElement("li");
     li.innerHTML = `<details id="mail-${esc(it.id)}"><summary><span class="ty ${esc(it.kind)}">${esc(it.kind.toUpperCase())}</span><span class="who">${esc(it.from)}</span><span class="subj">${esc(it.subject)}</span>${it.flag ? `<span class="flag">${esc(it.flag)}</span>` : ""}</summary>
-      <div class="body">${it.audio ? `<audio controls preload="none" src="${esc(it.audio)}"></audio><small class="muted">Transcript by ${esc(it.transcribed_by || "ElevenLabs Scribe")}:</small>` : ""}<pre>${esc(it.body)}</pre></div></details>`;
+      <div class="body">${it.audio ? `<audio controls preload="none" src="${esc(it.audio)}"></audio><small class="muted">Transcript by ${esc(it.transcribed_by || "ElevenLabs Scribe")}:</small>` : ""}${docHtml(it)}<pre>${esc(it.body)}</pre></div></details>`;
     ul.appendChild(li);
   }
+}
+function docHtml(it) {
+  if (!it.document) return "";
+  const isPdf = it.document.endsWith(".pdf");
+  const img = isPdf ? it.document.replace(/\.pdf$/, ".preview.png") : it.document;
+  return `<a class="docview" href="${esc(it.document)}" target="_blank" rel="noopener"><img src="${esc(img)}" alt="Invoice ${esc(it.id)} from ${esc(it.from)}" loading="lazy"><span>${isPdf ? "Open PDF" : "Open image"}</span></a><small class="muted">What the crew reads, extracted by ${esc(it.transcribed_by || "vision")}:</small>`;
 }
 function markReading(id) {
   $$(".inbox details.reading").forEach((d) => d.classList.remove("reading"));

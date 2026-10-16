@@ -267,3 +267,7 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .inbox .body{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
 .inbox pre{margin:0;white-space:pre-wrap;word-break:break-word;font:13px/1.55 'JetBrains Mono',monospace;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-variant-ligatures:none}
 .inbox audio{width:100%;height:36px}
+
+.docview{display:block;position:relative;max-width:360px;border-radius:12px;overflow:hidden;border:1px solid var(--line);box-shadow:0 14px 30px -20px rgba(80,40,10,.6)}
+.docview img{display:block;width:100%;height:auto}
+.docview span{position:absolute;right:8px;bottom:8px;font:700 11px 'JetBrains Mono',monospace;color:#fff;background:rgba(43,29,20,.75);border-radius:8px;padding:3px 8px}

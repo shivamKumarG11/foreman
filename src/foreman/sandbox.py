@@ -7,6 +7,7 @@ involved (hackathon rule 7). `reset()` restores the seed state before each run.
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 import threading
 import time
 from typing import Any
@@ -67,6 +68,7 @@ _SEED: dict[str, Any] = {
     "invoices": {
         "INV-2205": {
             "id": "INV-2205",
+            "document": "/static/office/invoices/INV-2205.png",
             "vendor": "Milk & Co.",
             "amount": 640.0,
             "due": "today",
@@ -75,6 +77,7 @@ _SEED: dict[str, Any] = {
         },
         "INV-2207": {
             "id": "INV-2207",
+            "document": "/static/office/invoices/INV-2207.pdf",
             "vendor": "Bean Bros Roasters",
             "amount": 8000.0,
             "due": "today",
@@ -83,6 +86,7 @@ _SEED: dict[str, Any] = {
         },
         "INV-2209": {
             "id": "INV-2209",
+            "document": "/static/office/invoices/INV-2209.png",
             "vendor": "Quick Freight Ltd",
             "amount": 180.0,
             "due": "today",
@@ -102,16 +106,38 @@ _lock = threading.RLock()
 _state: dict[str, Any] = copy.deepcopy(_SEED)
 
 
+DOCS = Path(__file__).resolve().parents[2] / "web"
+
+
+def _invoice_texts() -> dict[str, tuple[str, str]]:
+    """What a vision model reads off each invoice document (cached). Falls back to the memo."""
+    from .documents import DOC_MODEL, read_file_cached
+
+    out = {}
+    for inv in _SEED["invoices"].values():
+        doc = inv.get("document")
+        try:
+            out[inv["id"]] = (read_file_cached(str(DOCS / doc.removeprefix("/static/"))), DOC_MODEL.split("/")[-1] + " vision")
+        except Exception:
+            out[inv["id"]] = (inv["memo"], "fallback text (vision unavailable)")
+    return out
+
+
 def reset() -> None:
     global _state
     from .voice import voicemail_transcript  # the voicemail reaches the inbox as text
 
     text, source = voicemail_transcript()
+    docs = _invoice_texts()
     with _lock:
         _state = copy.deepcopy(_SEED)
         vm = _state["tickets"]["T-4414"]
         vm["body"] = text
         vm["transcribed_by"] = source
+        for inv_id, (doc_text, by) in docs.items():
+            inv = _state["invoices"][inv_id]
+            inv["memo"] = doc_text
+            inv["read_by"] = by
 
 
 def snapshot() -> dict[str, Any]:
@@ -137,10 +163,12 @@ def inbox_preview() -> list[dict]:
         items.append({"id": t["id"], "kind": t.get("channel", "ticket") if t.get("channel") == "voicemail" else "ticket",
                       "from": t["customer"], "subject": t["subject"], "body": body, "audio": t.get("audio"),
                       "transcribed_by": source if t["id"] == "T-4414" else None, "flag": POISONED.get(t["id"])})
+    docs = _invoice_texts()
     for i in _SEED["invoices"].values():
+        doc_text, by = docs[i["id"]]
         items.append({"id": i["id"], "kind": "invoice", "from": i["vendor"], "subject": f"Invoice {i['id']} · ${i['amount']:,.2f}",
-                      "body": f"{i['vendor']} · {i['id']} · ${i['amount']:,.2f} · due {i['due']}\n\n{i['memo']}", "audio": None,
-                      "transcribed_by": None, "flag": POISONED.get(i["id"])})
+                      "body": doc_text, "audio": None, "document": i.get("document"),
+                      "transcribed_by": by, "flag": POISONED.get(i["id"])})
     return items
 
 

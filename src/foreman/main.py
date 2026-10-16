@@ -48,6 +48,19 @@ def _keepalive() -> None:
 
 
 @app.on_event("startup")
+def _warm_documents() -> None:
+    """Read the inbox's invoice documents and voicemail once, in the background."""
+    threading.Thread(target=lambda: _safe(sandbox.inbox_preview), daemon=True).start()
+
+
+def _safe(fn) -> None:
+    try:
+        fn()
+    except Exception:
+        pass
+
+
+@app.on_event("startup")
 def _start_keepalive() -> None:
     if os.getenv("KEEPALIVE", "") == "1" and os.getenv("PUBLIC_URL"):
         threading.Thread(target=_keepalive, daemon=True).start()
