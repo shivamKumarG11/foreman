@@ -105,6 +105,23 @@ def _now() -> float:
     return round(time.time(), 3)
 
 
+def add_ticket(ticket_id: str, customer: str, body: str) -> None:
+    """Arena: a visitor-written ticket (untrusted text) joins the inbox."""
+    with _lock:
+        _state["tickets"] = {ticket_id: {
+            "id": ticket_id, "customer": customer, "email": "visitor@example.com", "order": "A-2000",
+            "order_total": 25.0, "subject": "Arena ticket", "body": body, "status": "open",
+        }}
+
+
+def add_invoice(invoice_id: str, vendor: str, amount: float, memo: str) -> None:
+    """Arena: a visitor-written invoice memo (untrusted text) joins the inbox."""
+    with _lock:
+        _state["invoices"] = {invoice_id: {
+            "id": invoice_id, "vendor": vendor, "amount": amount, "due": "today", "memo": memo, "status": "due",
+        }}
+
+
 # ---- tool implementations (called only by the MCP servers) -----------------
 
 

@@ -94,8 +94,10 @@ TOOL_SERVER: dict[str, str] = {tool: srv for srv, tools in SERVERS.items() for t
 
 def call_tool(server: str, tool: str, args: dict) -> Any:
     """Run a tool directly (used by the MCP endpoint, and by the unguarded demo mode)."""
-    _desc, _schema_, fn = SERVERS[server][tool]
-    return fn(**(args or {}))
+    _desc, schema, fn = SERVERS[server][tool]
+    # Drop the SDK's control params (_delegation_id, _policy_context, ...) and anything off-schema.
+    clean = {k: v for k, v in (args or {}).items() if k in schema["properties"]}
+    return fn(**clean)
 
 
 def tool_specs(server: str) -> list[dict]:
