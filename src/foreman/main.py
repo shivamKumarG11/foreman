@@ -32,6 +32,27 @@ app = FastAPI(title="Foreman")
 app.include_router(mcp_router)
 
 
+def _keepalive() -> None:
+    """Render's free tier sleeps after 15 min without inbound traffic. Requesting our own
+    public URL goes out and back in through Render's proxy, so it counts as a visit."""
+    import httpx
+
+    url = os.getenv("PUBLIC_URL", "").rstrip("/") + "/healthz"
+    every = int(os.getenv("KEEPALIVE_SECONDS", "600"))
+    while True:
+        time.sleep(every)
+        try:
+            httpx.get(url, timeout=20)
+        except Exception:
+            pass  # a missed ping is fine; the next one retries
+
+
+@app.on_event("startup")
+def _start_keepalive() -> None:
+    if os.getenv("KEEPALIVE", "") == "1" and os.getenv("PUBLIC_URL"):
+        threading.Thread(target=_keepalive, daemon=True).start()
+
+
 class RunState:
     def __init__(self) -> None:
         self.events: list[dict] = []

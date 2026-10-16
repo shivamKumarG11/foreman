@@ -126,7 +126,7 @@ uv run armoriq validate && uv run armoriq register
 
 Create the policies listed above in the ArmorIQ dashboard, open the app, and press **Run the back office**.
 
-Deploy: the repo includes a `Dockerfile` and `railway.json`. Set `ARMORIQ_API_KEY`, `TOKENROUTER_API_KEY`, `LLM_BASE_URL`, `MCP_TOKEN` and `PUBLIC_URL` (and optionally `ELEVENLABS_API_KEY`) as environment variables.
+Deploy: the repo includes a `Dockerfile` and a Render blueprint (`render.yaml`). On Render's free tier the app pings its own public URL every 10 minutes (`KEEPALIVE=1`) so it doesn't sleep. Set `ARMORIQ_API_KEY`, `TOKENROUTER_API_KEY`, `LLM_BASE_URL`, `MCP_TOKEN` and `PUBLIC_URL` (and optionally `ELEVENLABS_API_KEY`) as environment variables.
 
 The live demo is rate-limited (8 runs per IP per hour) because each run spends LLM credits.
 

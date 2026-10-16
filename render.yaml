@@ -1,0 +1,21 @@
+# Render blueprint: one free Docker web service.
+services:
+  - type: web
+    name: foreman
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /healthz
+    envVars:
+      - key: ARMORIQ_API_KEY
+        sync: false
+      - key: TOKENROUTER_API_KEY
+        sync: false
+      - key: MCP_TOKEN
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://api.tokenrouter.com/v1
+      - key: KEEPALIVE
+        value: "1"
