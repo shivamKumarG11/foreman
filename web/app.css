@@ -271,3 +271,16 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .docview{display:block;position:relative;max-width:360px;border-radius:12px;overflow:hidden;border:1px solid var(--line);box-shadow:0 14px 30px -20px rgba(80,40,10,.6)}
 .docview img{display:block;width:100%;height:auto}
 .docview span{position:absolute;right:8px;bottom:8px;font:700 11px 'JetBrains Mono',monospace;color:#fff;background:rgba(43,29,20,.75);border-radius:8px;padding:3px 8px}
+
+/* colour accents requested by the user */
+.chip-btn{background:#E3F8EE;border-color:#9EE5C3}
+.chip-btn:hover{background:#D3F3E3}
+.chip-btn small{color:#2E7D5B}
+.chip-btn[aria-pressed=true]{border-color:var(--ok);box-shadow:0 0 0 3px #C5F0DB}
+.btn.sun{background:var(--sun);color:var(--ink);box-shadow:0 10px 24px -10px rgba(214,150,0,.8),inset 0 -3px 0 rgba(0,0,0,.1)}
+.send-row{display:flex;justify-content:flex-end}
+.card.tint-yellow{background:#FFF6D9;border-color:#FFE29A}
+.card.tint-yellow .tag{background:#FFE9A8;color:#8A5A00}
+.card.tint-green{background:#E8F8EF;border-color:#ABE6C8}
+.card.tint-green .tag{background:#CDEFDD;color:#14714A}
+.card.tint-green .inbox details{background:#fff}
