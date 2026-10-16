@@ -38,12 +38,16 @@
 <main>
 <!-- ============================ OFFICE ============================ -->
 <section class="office" id="office" aria-labelledby="office-title">
-  <div class="sec-head">
-    <div>
+  <div class="office-hero">
+    <div class="oh-text">
       <span class="eyebrow">Live · real ArmorIQ decisions</span>
       <h2 id="office-title">The office at Acme Coffee Co.</h2>
-      <p class="muted">Everything here is a sandbox: fake customers, fake vendors, fake money. The decisions are real.</p>
+      <p class="muted">A small roaster with a big inbox. Ask the crew to clear it and watch every action pass through ArmorIQ. The company, mail and money are a sandbox; the decisions are real.</p>
     </div>
+    <figure class="oh-photo">
+      <img src="/static/img/cafe.jpg" alt="A sunny café with globe lamps, a wooden bar and green armchairs" width="1340" height="795">
+      <figcaption>Photo: <a href="https://unsplash.com/photos/VszC1eymfdI" target="_blank" rel="noopener">Vladimir Visotsky</a> on Unsplash</figcaption>
+    </figure>
   </div>
 
   <div class="console card">
@@ -64,9 +68,9 @@
       <div class="stage-top"><span class="live" id="live"><span class="dot"></span><span id="liveLabel">Idle</span></span><span class="badge-off" id="unguardedBadge" hidden>Guard off · sandbox only</span></div>
       <div class="stage3d" id="officeStage"></div>
       <div class="kpis">
-        <div class="kpi ok"><b id="k-allowed">0</b><small>allowed</small></div>
-        <div class="kpi wait"><b id="k-held">0</b><small>held for a human</small></div>
-        <div class="kpi no"><b id="k-blocked">0</b><small>blocked</small></div>
+        <div class="kpi ok"><b id="k-allowed">0</b><small>allowed <span class="of"></span></small><i class="bar"><span id="bar-allowed"></span></i></div>
+        <div class="kpi wait"><b id="k-held">0</b><small>held for a human <span class="of"></span></small><i class="bar"><span id="bar-held"></span></i></div>
+        <div class="kpi no"><b id="k-blocked">0</b><small>blocked <span class="of"></span></small><i class="bar"><span id="bar-blocked"></span></i></div>
       </div>
     </div>
     <aside class="activity card" aria-label="Activity">
@@ -81,10 +85,10 @@
       <div class="row-between"><h3>Signed work orders</h3><span class="tag">ArmorIQ</span></div>
       <ol id="slices" class="slices"><li class="empty">The Foreman's plan appears here, signed before any mail is read.</li></ol>
     </div>
-    <div class="card voicemail" id="vmCard">
-      <div class="row-between"><h3>Voicemail · +1 555 0142</h3><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" class="el-small"></div>
-      <audio controls preload="none" src="/static/voicemails/T-4414.mp3"></audio>
-      <p class="muted small" id="vmNote">Transcribed by ElevenLabs Scribe before the crew hears it. Treated as untrusted, like any email.</p>
+    <div class="card inbox-card">
+      <div class="row-between"><h3>Today's inbox</h3><span class="tag">untrusted</span></div>
+      <p class="muted small">Exactly what the crew will read. Open any item to see it in full, hidden instructions and all.</p>
+      <ul class="inbox" id="inboxList"><li class="empty">Loading the inbox…</li></ul>
     </div>
     <div class="card" id="moneyPanel" hidden>
       <h3>What actually happened in the sandbox</h3>
