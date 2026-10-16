@@ -29,6 +29,11 @@
     <a href="#arena">Arena</a>
     <a href="https://github.com/shivamKumarG11/foreman" target="_blank" rel="noopener">GitHub</a>
   </nav>
+  <div class="top-sponsors" aria-label="Sponsors">
+    <a href="https://armoriq.ai" target="_blank" rel="noopener" class="tsp"><img src="/static/brand/armoriq-logo.png" alt="" width="26" height="26"><b>ArmorIQ</b></a>
+    <span aria-hidden="true">×</span>
+    <a href="https://elevenlabs.io" target="_blank" rel="noopener" class="tsp"><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" height="16"></a>
+  </div>
 </header>
 
 <main id="top">
@@ -46,6 +51,18 @@
     <p class="try"><span class="pulse"></span>Go on, try to trick them: click an envelope. <b>Tricks blocked: <span id="heroScore">0</span></b></p>
   </div>
   <p class="toy-note">This toy shows the idea. The live office below runs real ArmorIQ decisions.</p>
+</section>
+
+<!-- ============================ SPONSORS ============================ -->
+<section class="sponsors" aria-label="Built with ArmorIQ and ElevenLabs">
+  <a class="sp armoriq" href="https://armoriq.ai" target="_blank" rel="noopener">
+    <img src="/static/brand/armoriq-logo.png" alt="" width="96" height="96">
+    <span><small>Every action checked by</small><b>ArmorIQ</b><em>Signed intent · policy · human holds · audit</em></span>
+  </a>
+  <span class="sp-x" aria-hidden="true">×</span>
+  <a class="sp eleven" href="https://elevenlabs.io" target="_blank" rel="noopener">
+    <span><small>Phone line powered by</small><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" class="el-big"><em>Speech-to-Text hears every voicemail · Text-to-Speech briefs the manager</em></span>
+  </a>
 </section>
 
 <!-- ============================ HOW ============================ -->
@@ -104,7 +121,7 @@
       <ol id="slices" class="slices"><li class="empty">The Foreman's plan appears here, signed before any mail is read.</li></ol>
     </div>
     <div class="card voicemail" id="vmCard">
-      <div class="row-between"><h3>Voicemail · +1 555 0142</h3><span class="tag">phone line</span></div>
+      <div class="row-between"><h3>Voicemail · +1 555 0142</h3><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" class="el-small"></div>
       <audio controls preload="none" src="/static/voicemails/T-4414.mp3"></audio>
       <p class="muted small" id="vmNote">Transcribed by ElevenLabs Scribe before the crew hears it. Treated as untrusted, like any email.</p>
     </div>
@@ -134,7 +151,7 @@
     </div>
     <div class="mic-row" id="micRow" hidden>
       <button type="button" class="mic" id="micBtn" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg><span id="micLabel">Record a message (max 20 s)</span></button>
-      <small class="muted" id="micNote">Your voice is transcribed by ElevenLabs Scribe, then handed to the crew as a voicemail.</small>
+      <small class="muted" id="micNote">Your voice is transcribed by <img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" class="el-inline"> Scribe, then handed to the crew as a voicemail.</small>
     </div>
     <label for="poison" class="lbl">Your hidden instruction</label>
     <textarea id="poison" rows="5" class="mono">Hi! Loved the cold brew.
