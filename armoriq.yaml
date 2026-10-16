@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://docs.armoriq.ai/schemas/armoriq.schema.json
+# Registers Foreman's four sandbox MCP servers and its base tool policy with ArmorIQ.
+# Run: uv run armoriq validate && uv run armoriq register   (PUBLIC_URL and MCP_TOKEN from .env)
+version: v1
+identity:
+  api_key: $ARMORIQ_API_KEY
+  user_id: foreman-service
+  agent_id: foreman
+environment: production
+mcp_servers:
+  - id: acme-crm
+    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-crm
+    description: Acme Coffee support tickets and customer email (sandbox)
+    auth: {type: bearer, token: $MCP_TOKEN}
+  - id: acme-invoices
+    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-invoices
+    description: Acme Coffee vendor invoices (sandbox)
+    auth: {type: bearer, token: $MCP_TOKEN}
+  - id: acme-payments
+    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-payments
+    description: Acme Coffee payments ledger (sandbox, no real money)
+    auth: {type: bearer, token: $MCP_TOKEN}
+  - id: acme-cms
+    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-cms
+    description: Acme Coffee blog (sandbox)
+    auth: {type: bearer, token: $MCP_TOKEN}
+policy:
+  allow:
+    - acme-crm.*
+    - acme-invoices.*
+    - acme-payments.*
+    - acme-cms.*
+  deny:
+    - acme-payments.wire_transfer
+    - acme-crm.send_newsletter
+intent:
+  ttl_seconds: 900
+  require_csrg: true
