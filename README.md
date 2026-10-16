@@ -7,7 +7,7 @@ Foreman runs the daily back office of a small business: it answers support ticke
 Built for **Flow State**, ArmorIQ's AI agent + MCP hackathon (Oct 10–17, 2026).
 
 - **Live demo:** https://foreman-ejq9.onrender.com
-- **Demo video:** _[VIDEO LINK]_
+- **Demo video:** https://youtu.be/jhN-WN_ybfs
 
 > Everything in Foreman is a sandbox. Acme Coffee Co., its customers, vendors, bank accounts and dollars are invented. No real money or email ever moves.
 
