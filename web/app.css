@@ -327,3 +327,16 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .console textarea{background:#FFFBF0;border-color:#F2C21B}
 .console .seg{background:rgba(255,255,255,.5)}
 .stage-wrap{background:radial-gradient(120% 90% at 50% 35%,#7246DA 0%,#5B2EC4 55%,#4A22A8 100%);border-color:#4A22A8}
+
+/* Arena card: deep espresso (replaces purple), tab icons */
+.arena-card{background:radial-gradient(120% 100% at 20% 0%,#4A2D1C 0%,#3A2215 55%,#2B190F 100%);border-color:#2B190F;box-shadow:0 24px 50px -26px rgba(43,25,15,.75)}
+.arena-card .lbl{color:#F6E7D6}
+.arena-card #sourceNote,.arena-card .muted{color:#E3CDB6}
+.arena-card .seg{background:rgba(255,255,255,.1)}
+.arena-card .pill{color:#F6E7D6;display:inline-flex;align-items:center;gap:8px}
+.arena-card .pill svg{flex:none;opacity:.9}
+.arena-card .pill[aria-checked=true]{background:#FFD84A;color:#2B1D14}
+.arena-card textarea{border-color:#6B4A33}
+.arena-card .doc,.arena-card .vm{border-color:#6B4A33}
+.arena-card .upload{color:#F6E7D6;border-color:rgba(246,231,214,.5)}
+.arena-card #arenaResult p{color:#F6E7D6}
