@@ -20,9 +20,11 @@ const isRead = (t) => /^(list_|read_)/.test(t);
 // ---------------------------------------------------------------- 3D worlds
 let office = null;
 try {
-  initHero($("#heroStage"), (n) => ($("#heroScore").textContent = n));
-  office = createWorld($("#officeStage"), { mode: "office" });
-  office.bots.foreman.say("Morning! Give us today's request.", 4);
+  if ($("#heroStage")) initHero($("#heroStage"));
+  if ($("#officeStage")) {
+    office = createWorld($("#officeStage"), { mode: "office" });
+    office.bots.foreman.say("Morning! Give us today's request.", 4);
+  }
 } catch (e) {
   console.warn("3D unavailable", e);
 }
@@ -56,7 +58,7 @@ $$("[data-actor]").forEach((b) => b.addEventListener("click", () => {
   $$("[data-actor]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   office?.bots.foreman.say(state.actor === "raj" ? "Raj is an intern. ArmorIQ knows." : "Priya's the boss today.", 2.5);
 }));
-$("#guardBtn").addEventListener("click", () => {
+$("#guardBtn")?.addEventListener("click", () => {
   state.guarded = !state.guarded;
   const g = $("#guardBtn");
   g.className = "guard " + (state.guarded ? "on" : "off");
@@ -198,7 +200,7 @@ function stream(runId, onEvent, onEnd) {
   es.onerror = () => { es.close(); onEnd?.(); };
 }
 
-$("#runBtn").addEventListener("click", async () => {
+$("#runBtn")?.addEventListener("click", async () => {
   if (state.running) return;
   const btn = $("#runBtn");
   resetOffice();
@@ -242,17 +244,17 @@ async function startRecording() {
   $("#micLabel").textContent = "Recording… click to stop";
   setTimeout(() => rec && rec.state === "recording" && rec.stop(), 20000);
 }
-$("#micBtn").addEventListener("click", () => {
+$("#micBtn")?.addEventListener("click", () => {
   if (rec && rec.state === "recording") rec.stop();
   else startRecording().catch(() => ($("#micNote").textContent = "Microphone permission is needed to speak an attack."));
 });
 fetch("/api/config").then((r) => r.json()).then((c) => {
-  if (c.voice) $("#vmKind").hidden = false;
-  else $("#vmNote").textContent = "Speech-to-text isn't switched on for this server, so the crew reads the voicemail's script.";
+  if (c.voice) { if ($("#vmKind")) $("#vmKind").hidden = false; }
+  else if ($("#vmNote")) $("#vmNote").textContent = "Speech-to-text isn't switched on for this server, so the crew reads the voicemail's script.";
 }).catch(() => {});
 
-function renderScore() { const s = store.get("arena", { stopped: 0, tries: 0 }); $("#score").textContent = `${s.stopped} / ${s.tries}`; }
-$("#attackBtn").addEventListener("click", async () => {
+function renderScore() { if (!$("#score")) return; const s = store.get("arena", { stopped: 0, tries: 0 }); $("#score").textContent = `${s.stopped} / ${s.tries}`; }
+$("#attackBtn")?.addEventListener("click", async () => {
   const btn = $("#attackBtn"), out = $("#arenaResult");
   out.innerHTML = '<p class="muted">The crew is reading your message…</p>';
   btn.disabled = true;
@@ -271,7 +273,7 @@ $("#attackBtn").addEventListener("click", async () => {
     if (!attempts.length) { out.innerHTML = `<div class="result"><div><b>The crew ignored your instruction.</b><div class="muted">Nothing forbidden was attempted, so ArmorIQ had nothing to stop. Try something sneakier.</div></div></div>`; return; }
     s.tries++; if (!leaked.length && stopped.length) s.stopped++; store.set("arena", s); renderScore();
     if (leaked.length) { out.innerHTML = `<div class="result won"><span class="slam" style="color:var(--wait)">YOU WIN</span><div>${leaked.map((a) => esc(describe(a.tool, a.args))).join("<br>")} got through. Tell us how!</div></div>`; return; }
-    out.innerHTML = `<div class="result lost"><span class="slam" style="color:var(--no)">BLOCKED</span><div style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">${stopped.map((a) => `<div><b>${esc(describe(a.tool, a.args))}</b><div class="mono muted small">${esc(a.verdict.toUpperCase())} · ${esc(a.reason)}</div></div>`).join("")}<a href="?run=${run_id}#receipt">See the receipt and trace</a></div></div>`;
+    out.innerHTML = `<div class="result lost"><span class="slam" style="color:var(--no)">BLOCKED</span><div style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px">${stopped.map((a) => `<div><b>${esc(describe(a.tool, a.args))}</b><div class="mono muted small">${esc(a.verdict.toUpperCase())} · ${esc(a.reason)}</div></div>`).join("")}<a href="/office?run=${run_id}#receipt">See the receipt and trace</a></div></div>`;
   });
 });
 
@@ -304,10 +306,10 @@ async function loadReceipt(runId) {
   ];
   $("#controls").innerHTML = controls.map(([id, n, e]) => `<div class="card ctrl"><span class="id">${esc(id)}</span><b>${esc(n)}</b><span>${esc(e)}</span></div>`).join("");
   $("#evidenceBtn").href = `/api/runs/${runId}/evidence.md`;
-  $("#copyBtn").onclick = () => navigator.clipboard?.writeText(`${location.origin}/?run=${runId}#receipt`);
+  $("#copyBtn").onclick = () => navigator.clipboard?.writeText(`${location.origin}/office?run=${runId}#receipt`);
   $("#receipt").hidden = false;
 }
 
 renderScore();
 const qRun = new URLSearchParams(location.search).get("run");
-if (qRun) loadReceipt(qRun).then(() => $("#receipt").scrollIntoView());
+if (qRun && $("#paper")) loadReceipt(qRun).then(() => $("#receipt").scrollIntoView());

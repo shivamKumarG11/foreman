@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live office · Foreman</title>
+<meta name="description" content="A crew of AI agents runs your back office, under a work order signed by ArmorIQ before they read a single email.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/" aria-label="Foreman home">
+    <span class="mascot" aria-hidden="true"><svg viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="23" fill="#FF7A1A"/><path d="M11 21a13 11 0 0 1 26 0z" fill="#FFC53D"/><rect x="9" y="20" width="30" height="4" rx="2" fill="#E8A91F"/><rect x="13" y="24" width="22" height="15" rx="6" fill="#FFF8F0"/><rect x="15.5" y="26.5" width="17" height="10" rx="4" fill="#2B1D14"/><circle cx="20.5" cy="31.5" r="1.8" fill="#BAF7FF"/><circle cx="27.5" cy="31.5" r="1.8" fill="#BAF7FF"/></svg></span>
+    <span class="brand-text"><b>Foreman</b></span>
+  </a>
+  <nav aria-label="Pages">
+    <a href="/office" aria-current="page" class="active">Live office</a>
+    <a href="/arena">Arena</a>
+    <a href="https://github.com/shivamKumarG11/foreman" target="_blank" rel="noopener" class="gh" aria-label="Source code on GitHub"><svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+  </nav>
+  <div class="top-sponsors" aria-label="Sponsors">
+    <a href="https://armoriq.ai" target="_blank" rel="noopener" class="tsp"><img src="/static/brand/armoriq-logo.png" alt="" width="26" height="26"><b>ArmorIQ</b></a>
+    <span aria-hidden="true">×</span>
+    <a href="https://elevenlabs.io" target="_blank" rel="noopener" class="tsp"><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" height="16"></a>
+  </div>
+</header>
+
+<main>
+<!-- ============================ OFFICE ============================ -->
+<section class="office" id="office" aria-labelledby="office-title">
+  <div class="sec-head">
+    <div>
+      <span class="eyebrow">Live · real ArmorIQ decisions</span>
+      <h2 id="office-title">The office at Acme Coffee Co.</h2>
+      <p class="muted">Everything here is a sandbox: fake customers, fake vendors, fake money. The decisions are real.</p>
+    </div>
+  </div>
+
+  <div class="console card">
+    <label for="goal" class="lbl">Today's request</label>
+    <textarea id="goal" rows="2">Clear today's back office: answer the support tickets, pay the invoices that are due, and publish the weekly update.</textarea>
+    <div class="console-row">
+      <div class="seg" role="group" aria-label="Who is asking">
+        <button type="button" class="pill" data-actor="priya" aria-pressed="true">Priya · ops manager</button>
+        <button type="button" class="pill" data-actor="raj" aria-pressed="false">Raj · intern</button>
+      </div>
+      <button type="button" id="guardBtn" class="guard on" aria-pressed="true"><span class="dot"></span><span id="guardText">ArmorIQ guard on</span></button>
+      <button type="button" id="runBtn" class="btn primary">Run the back office</button>
+    </div>
+  </div>
+
+  <div class="office-grid">
+    <div class="stage-wrap card">
+      <div class="stage-top"><span class="live" id="live"><span class="dot"></span><span id="liveLabel">Idle</span></span><span class="badge-off" id="unguardedBadge" hidden>Guard off · sandbox only</span></div>
+      <div class="stage3d" id="officeStage"></div>
+      <div class="kpis">
+        <div class="kpi ok"><b id="k-allowed">0</b><small>allowed</small></div>
+        <div class="kpi wait"><b id="k-held">0</b><small>held for a human</small></div>
+        <div class="kpi no"><b id="k-blocked">0</b><small>blocked</small></div>
+      </div>
+    </div>
+    <aside class="activity card" aria-label="Activity">
+      <div class="row-between"><h3>What's happening</h3><a href="https://platform.armoriq.ai" target="_blank" rel="noopener">ArmorIQ console ↗</a></div>
+      <div id="holds"></div>
+      <ol id="feed" class="feed"><li class="empty">Press <b>Run the back office</b> and every decision streams in here.</li></ol>
+    </aside>
+  </div>
+
+  <div class="office-bottom">
+    <div class="card">
+      <div class="row-between"><h3>Signed work orders</h3><span class="tag">ArmorIQ</span></div>
+      <ol id="slices" class="slices"><li class="empty">The Foreman's plan appears here, signed before any mail is read.</li></ol>
+    </div>
+    <div class="card voicemail" id="vmCard">
+      <div class="row-between"><h3>Voicemail · +1 555 0142</h3><img src="/static/brand/elevenlabs-logo-black.svg" alt="ElevenLabs" class="el-small"></div>
+      <audio controls preload="none" src="/static/voicemails/T-4414.mp3"></audio>
+      <p class="muted small" id="vmNote">Transcribed by ElevenLabs Scribe before the crew hears it. Treated as untrusted, like any email.</p>
+    </div>
+    <div class="card" id="moneyPanel" hidden>
+      <h3>What actually happened in the sandbox</h3>
+      <ul id="money" class="money"></ul>
+      <a id="receiptLink" class="btn soft small" href="#receipt" hidden>See the receipt</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ RECEIPT ============================ -->
+<section class="receipt" id="receipt" aria-labelledby="receipt-title" hidden>
+  <div class="sec-head"><div><span class="eyebrow green">Receipt</span><h2 id="receipt-title">Hand this run to your auditor.</h2></div></div>
+  <div class="receipt-grid">
+    <div class="paper" id="paper"></div>
+    <div class="evidence">
+      <div class="controls-grid" id="controls"></div>
+      <p class="muted small">Each control is backed by the ArmorIQ decisions from this run. It's a starting point for evidence, not a certification.</p>
+      <div class="row wrap">
+        <a id="evidenceBtn" class="btn primary" href="#">Download evidence pack</a>
+        <button type="button" id="copyBtn" class="btn soft">Copy receipt link</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">Foreman is a hackathon project for ArmorIQ Flow State. Every customer, vendor, account and dollar here is invented. <a href="https://github.com/shivamKumarG11/foreman">Source on GitHub</a></footer>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

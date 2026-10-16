@@ -275,4 +275,14 @@ def index() -> FileResponse:
     return FileResponse(WEB / "index.html")
 
 
+@app.get("/office")
+def office_page() -> FileResponse:
+    return FileResponse(WEB / "office.html")
+
+
+@app.get("/arena")
+def arena_page() -> FileResponse:
+    return FileResponse(WEB / "arena.html")
+
+
 app.mount("/static", StaticFiles(directory=WEB), name="static")
