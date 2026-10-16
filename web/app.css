@@ -305,3 +305,18 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .chip-btn:hover{background:#2DB86F}
 .chip-btn small{color:#0E3B25}
 .chip-btn[aria-pressed=true]{border-color:#0B2A1A;box-shadow:0 0 0 3px #A8EBC8}
+
+/* Arena card: deep purple */
+.arena-card{background:#5B2EC4;border-color:#4A22A8;box-shadow:0 24px 50px -26px rgba(60,20,140,.7)}
+.arena-card .lbl{color:#EDE5FF}
+.arena-card #sourceNote,.arena-card .muted{color:#D9CCFF}
+.arena-card .seg{background:rgba(255,255,255,.14)}
+.arena-card .pill{color:#EDE5FF}
+.arena-card .pill[aria-checked=true]{background:#fff;color:#2B1D14}
+.arena-card textarea{background:#FFFBF6;border-color:#7C55E6}
+.arena-card .upload{color:#fff;border-color:rgba(255,255,255,.55)}
+.arena-card .doc,.arena-card .vm{border-color:#7C55E6}
+.arena-card .doc[aria-pressed=true],.arena-card .vm[aria-pressed=true]{border-color:#FFD84A;box-shadow:0 0 0 3px rgba(255,216,74,.55)}
+.arena-card .chip-btn[aria-pressed=true]{border-color:#FFD84A;box-shadow:0 0 0 3px rgba(255,216,74,.55)}
+.arena-card .mic{background:#fff}
+.arena-card #arenaResult p{color:#EDE5FF}
