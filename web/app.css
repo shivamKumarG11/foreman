@@ -320,3 +320,10 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .arena-card .chip-btn[aria-pressed=true]{border-color:#FFD84A;box-shadow:0 0 0 3px rgba(255,216,74,.55)}
 .arena-card .mic{background:#fff}
 .arena-card #arenaResult p{color:#EDE5FF}
+
+/* request card: deep yellow; 3D stage: deep purple */
+.console{background:#FFD84A;border-color:#F2C21B}
+.console .lbl{color:#3D2E14}
+.console textarea{background:#FFFBF0;border-color:#F2C21B}
+.console .seg{background:rgba(255,255,255,.5)}
+.stage-wrap{background:radial-gradient(120% 90% at 50% 35%,#7246DA 0%,#5B2EC4 55%,#4A22A8 100%);border-color:#4A22A8}
