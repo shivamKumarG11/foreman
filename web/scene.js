@@ -116,7 +116,6 @@ function makeGate() {
   [-1.25, 1.25].forEach((x) => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.25, 24), mat(C.ink)); p.position.set(x, 0.05, 0); g.add(p); });
   const veil = new THREE.Mesh(new THREE.CircleGeometry(1.2, 48, 0, Math.PI), new THREE.MeshBasicMaterial({ color: C.orange, transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false })); g.add(veil);
   const scan = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.02, 8, 64, Math.PI), glow(C.sun, 2)); g.add(scan);
-  const sign = label('<img src="/static/brand/armoriq-logo.png" alt=""><b>ArmorIQ</b><span>checkpoint</span>', "gate3d"); sign.position.set(0, 1.62, 0); g.add(sign);
   const stamp = label("", "stamp3d"); stamp.position.set(0, 0.75, 0.3); g.add(stamp);
   g.userData = { arch, veil, scan, stamp, flash: 0, flashColor: new THREE.Color(C.orange) };
   return g;

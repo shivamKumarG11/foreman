@@ -215,11 +215,38 @@ async def events(rid: str) -> StreamingResponse:
 
 @app.post("/api/runs/{rid}/holds/{did}")
 def decide_hold(rid: str, did: str, body: HoldDecision) -> dict:
+    """The manager's decision goes to ArmorIQ (POST /delegation/approve|reject).
+
+    Only ArmorIQ's answer counts: the crew keeps waiting until ArmorIQ reports the
+    delegation as approved, then retries the call with it. If ArmorIQ refuses an
+    approval (for example, over the approver's limit), the hold stays in place.
+    """
+    import httpx
+
     st = RUNS.get(rid)
     if not st:
         raise HTTPException(404, "unknown run")
-    st.decisions[did] = "approved" if body.decision == "approve" else "rejected"
-    return {"ok": True, "decision": st.decisions[did]}
+    approver = os.getenv("APPROVER_EMAIL")
+    if not approver:
+        raise HTTPException(409, "No approver is configured. Approve it in the ArmorIQ console instead.")
+    action = "approve" if body.decision == "approve" else "reject"
+    r = httpx.post(
+        f"https://api.armoriq.ai/delegation/{action}",
+        json={"delegationId": did, "approverEmail": approver},
+        headers={"X-API-Key": os.environ["ARMORIQ_API_KEY"], "X-User-Email": approver},
+        timeout=30,
+    )
+    try:
+        data = r.json()
+    except ValueError:
+        data = {}
+    if r.status_code >= 300:
+        msg = data.get("message")
+        msg = "; ".join(msg) if isinstance(msg, list) else (msg or f"HTTP {r.status_code}")
+        raise HTTPException(409, f"ArmorIQ refused: {msg}")
+    if action == "reject":
+        st.decisions[did] = "rejected"
+    return {"ok": True, "decision": data.get("status", action + "d"), "by": approver}
 
 
 @app.get("/api/runs/{rid}")

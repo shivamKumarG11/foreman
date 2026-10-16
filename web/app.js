@@ -124,10 +124,15 @@ function holdCard(ev) {
     <div class="what">${esc(TITLES[ev.worker])} wants to <b>${esc(describe(ev.tool, ev.args))}</b></div>
     <div class="meta"><div>why · ${esc(ev.reason)}</div><div>delegation · ${esc((ev.delegation_id || "").slice(0, 18))}</div></div>
     <div class="btns"><button type="button" class="btn primary small approve">Approve</button><button type="button" class="btn soft small reject">Reject</button></div>
-    <small class="muted">You can also decide it in the ArmorIQ dashboard. The crew waits either way.</small>`;
+    <small class="muted holdnote">Your decision goes to ArmorIQ. You can also decide it in the ArmorIQ console; the crew waits either way.</small>`;
   const send = async (decision) => {
     $$("button", div).forEach((b) => (b.disabled = true));
-    await fetch(`/api/runs/${state.runId}/holds/${ev.delegation_id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ decision }) });
+    const note = $(".holdnote", div);
+    note.textContent = decision === "approve" ? "Sending your approval to ArmorIQ…" : "Sending your rejection to ArmorIQ…";
+    const r = await fetch(`/api/runs/${state.runId}/holds/${ev.delegation_id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ decision }) });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { note.textContent = (data.detail || "ArmorIQ didn't accept that.") + " You can also decide it in the ArmorIQ console."; $$("button", div).forEach((b) => (b.disabled = false)); return; }
+    note.textContent = `ArmorIQ recorded it (${data.decision}). The crew carries on.`;
   };
   $(".approve", div).addEventListener("click", () => send("approve"));
   $(".reject", div).addEventListener("click", () => send("reject"));
