@@ -191,6 +191,40 @@ def evidence(rid: str) -> PlainTextResponse:
                              headers={"Content-Disposition": f'attachment; filename="foreman-evidence-{rid}.md"'})
 
 
+class VoiceRequest(BaseModel):
+    text: str
+
+
+_voice_cache: dict[str, bytes] = {}
+
+
+@app.post("/api/voice")
+def voice(body: VoiceRequest):
+    """Spoken hold briefings via ElevenLabs text-to-speech. Off unless ELEVENLABS_API_KEY is set."""
+    import httpx
+    from fastapi.responses import Response
+
+    key = os.getenv("ELEVENLABS_API_KEY")
+    if not key:
+        raise HTTPException(404, "voice not configured")
+    text = body.text.strip()[:300]
+    if text not in _voice_cache:
+        if len(_voice_cache) > 200:
+            _voice_cache.clear()
+        voice_id = os.getenv("ELEVENLABS_VOICE_ID", "JBFqnCBsd6RMkjVDRZzb")
+        r = httpx.post(
+            f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
+            params={"output_format": "mp3_44100_64"},
+            headers={"xi-api-key": key},
+            json={"text": text, "model_id": os.getenv("ELEVENLABS_MODEL", "eleven_multilingual_v2")},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            raise HTTPException(502, "voice unavailable")
+        _voice_cache[text] = r.content
+    return Response(_voice_cache[text], media_type="audio/mpeg")
+
+
 @app.get("/api/sandbox")
 def sandbox_state() -> dict:
     return sandbox.snapshot()

@@ -46,7 +46,7 @@ def _client() -> ArmorIQClient:
         api_key=os.environ["ARMORIQ_API_KEY"],
         user_id="foreman-service",
         agent_id="foreman",
-        mcp_credentials={name: cred for name in mcp_servers.SERVERS},
+        mcp_credentials={mcp_servers.armoriq_name(n): cred for n in mcp_servers.SERVERS},
     )
 
 
@@ -78,7 +78,7 @@ class Guard:
     def sign(self, worker: str, task: str, tools: list[str]) -> dict:
         plan = {
             "goal": f"[{worker}] {task}",
-            "steps": [{"action": t, "mcp": mcp_servers.TOOL_SERVER[t], "params": {}} for t in tools],
+            "steps": [{"action": t, "mcp": mcp_servers.armoriq_name(mcp_servers.TOOL_SERVER[t]), "params": {}} for t in tools],
         }
         capture = self.client.capture_plan(
             llm=FOREMAN_MODEL, prompt=self.goal, plan=plan,
@@ -97,9 +97,9 @@ class Guard:
     # ---- every tool call -----------------------------------------------------
 
     def call(self, worker: str, tool: str, args: dict) -> Verdict:
-        server = mcp_servers.TOOL_SERVER.get(tool)
-        if server is None:
+        if tool not in mcp_servers.TOOL_SERVER:
             return Verdict("blocked", f"unknown tool '{tool}'")
+        server = mcp_servers.armoriq_name(mcp_servers.TOOL_SERVER[tool])
         token, allowed = self.slices[worker]
         try:
             r = self.client.invoke(server, tool, token, params=args, user_email=self.user_email)
@@ -108,7 +108,7 @@ class Guard:
                 return Verdict("error", str(data)[:300])
             return Verdict("allowed", "in the signed work order and allowed by policy", result=data)
         except IntentMismatchException:
-            return Verdict("blocked", f"'{tool}' is not in the {worker} worker's signed work order (plan {token.plan_hash[:12]}…)")
+            return Verdict("blocked", f"'{tool}' is not in the {worker} worker's signed work order (plan {token.plan_hash[:12]}...)")
         except PolicyBlockedException as e:
             return Verdict("blocked", e.reason or str(e))
         except PolicyHoldException as e:

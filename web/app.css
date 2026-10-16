@@ -5,6 +5,7 @@
   --glass-a:rgba(255,255,255,.075); --glass-b:rgba(255,255,255,.03); --line:rgba(255,255,255,.09);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;background:var(--ground);color:var(--ink);font-family:Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--link)} a:hover{color:#FFD2AE}
 .bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(1200px 600px at 70% -10%,rgba(255,122,26,.10),transparent 60%),radial-gradient(900px 500px at -10% 30%,rgba(88,118,255,.10),transparent 60%),var(--ground)}

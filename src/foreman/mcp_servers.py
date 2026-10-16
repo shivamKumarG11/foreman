@@ -92,6 +92,11 @@ SERVERS: dict[str, dict[str, tuple[str, dict, Callable[..., Any]]]] = {
 TOOL_SERVER: dict[str, str] = {tool: srv for srv, tools in SERVERS.items() for tool in tools}
 
 
+def armoriq_name(server: str) -> str:
+    """Name the server is registered under in ArmorIQ (a suffix lets dev and prod coexist)."""
+    return server + os.getenv("MCP_NAME_SUFFIX", "")
+
+
 def call_tool(server: str, tool: str, args: dict) -> Any:
     """Run a tool directly (used by the MCP endpoint, and by the unguarded demo mode)."""
     _desc, schema, fn = SERVERS[server][tool]
