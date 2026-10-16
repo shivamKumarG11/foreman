@@ -60,11 +60,6 @@ SERVERS: dict[str, dict[str, tuple[str, dict, Callable[..., Any]]]] = {
         ),
     },
     "acme-payments": {
-        "refund": (
-            "Refund a customer for a ticket's order.",
-            _schema({"ticket_id": ("string", "Ticket id"), "amount": ("number", "Amount in USD")}, ["ticket_id", "amount"]),
-            sandbox.refund,
-        ),
         "pay_invoice": (
             "Pay a vendor invoice from the operating account.",
             _schema({"invoice_id": ("string", "Invoice id"), "amount": ("number", "Amount in USD")}, ["invoice_id", "amount"]),
@@ -77,6 +72,13 @@ SERVERS: dict[str, dict[str, tuple[str, dict, Callable[..., Any]]]] = {
                 ["account", "amount"],
             ),
             sandbox.wire_transfer,
+        ),
+    },
+    "acme-refunds": {
+        "refund": (
+            "Refund a customer for a ticket's order.",
+            _schema({"ticket_id": ("string", "Ticket id"), "amount": ("number", "Amount in USD")}, ["ticket_id", "amount"]),
+            sandbox.refund,
         ),
     },
     "acme-cms": {

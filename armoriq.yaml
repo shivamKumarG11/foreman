@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=https://docs.armoriq.ai/schemas/armoriq.schema.json
 # Registers Foreman's four sandbox MCP servers and its base tool policy with ArmorIQ.
-# Run: uv run armoriq validate && uv run armoriq register   (PUBLIC_URL and MCP_TOKEN from .env)
+# Run: uv run armoriq validate && uv run armoriq register   (MCP_TOKEN from .env)
+# Server ids carry a -live suffix; set MCP_NAME_SUFFIX=-live in the app's environment to match.
 version: v1
 identity:
   api_key: $ARMORIQ_API_KEY
@@ -8,31 +9,36 @@ identity:
   agent_id: foreman
 environment: production
 mcp_servers:
-  - id: acme-crm
-    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-crm
+  - id: acme-crm-live
+    url: https://foreman-ejq9.onrender.com/mcp/acme-crm
     description: Acme Coffee support tickets and customer email (sandbox)
     auth: {type: bearer, token: $MCP_TOKEN}
-  - id: acme-invoices
-    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-invoices
+  - id: acme-invoices-live
+    url: https://foreman-ejq9.onrender.com/mcp/acme-invoices
     description: Acme Coffee vendor invoices (sandbox)
     auth: {type: bearer, token: $MCP_TOKEN}
-  - id: acme-payments
-    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-payments
+  - id: acme-payments-live
+    url: https://foreman-ejq9.onrender.com/mcp/acme-payments
     description: Acme Coffee payments ledger (sandbox, no real money)
     auth: {type: bearer, token: $MCP_TOKEN}
-  - id: acme-cms
-    url: https://calgary-seemed-compromise-domain.trycloudflare.com/mcp/acme-cms
+  - id: acme-refunds-live
+    url: https://foreman-ejq9.onrender.com/mcp/acme-refunds
+    description: Acme Coffee customer refunds (sandbox, no real money)
+    auth: {type: bearer, token: $MCP_TOKEN}
+  - id: acme-cms-live
+    url: https://foreman-ejq9.onrender.com/mcp/acme-cms
     description: Acme Coffee blog (sandbox)
     auth: {type: bearer, token: $MCP_TOKEN}
 policy:
   allow:
-    - acme-crm.*
-    - acme-invoices.*
-    - acme-payments.*
-    - acme-cms.*
+    - acme-crm-live.*
+    - acme-invoices-live.*
+    - acme-payments-live.*
+    - acme-refunds-live.*
+    - acme-cms-live.*
   deny:
-    - acme-payments.wire_transfer
-    - acme-crm.send_newsletter
+    - acme-payments-live.wire_transfer
+    - acme-crm-live.send_newsletter
 intent:
   ttl_seconds: 900
   require_csrg: true

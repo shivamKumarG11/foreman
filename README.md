@@ -6,7 +6,7 @@ Foreman runs the daily back office of a small business: it answers support ticke
 
 Built for **Flow State**, ArmorIQ's AI agent + MCP hackathon (Oct 10–17, 2026).
 
-- **Live demo:** _[LIVE URL]_
+- **Live demo:** https://foreman-ejq9.onrender.com
 - **Demo video:** _[VIDEO LINK]_
 
 > Everything in Foreman is a sandbox. Acme Coffee Co., its customers, vendors, bank accounts and dollars are invented. No real money or email ever moves.
@@ -63,7 +63,7 @@ The model did fall for the injections. ArmorIQ is what stopped the damage.
      └────── every tool call: ArmorIQ proxy (verify token + Merkle proof, check policy) ──────┐
                                                                                              │
           allowed ─► forwarded to our MCP servers          blocked ─► refused, logged       held ─► delegation request
-                     acme-crm · acme-invoices                                                        → manager approves
+                     acme-crm · acme-invoices · acme-refunds                                         → manager approves
                      acme-payments · acme-cms                                                        → retried with approval
 ```
 
@@ -79,13 +79,14 @@ The model did fall for the injections. ArmorIQ is what stopped the damage.
 
 ## How MCP is used
 
-Foreman's tools are four **MCP servers** we wrote to [ArmorIQ's MCP format](https://docs.armoriq.ai/sdk/mcp-directory/mcp-format): JSON-RPC 2.0 over HTTP POST, responses wrapped as Server-Sent Events, with `initialize`, `tools/list` and `tools/call`.
+Foreman's tools are five **MCP servers** we wrote to [ArmorIQ's MCP format](https://docs.armoriq.ai/sdk/mcp-directory/mcp-format): JSON-RPC 2.0 over HTTP POST, responses wrapped as Server-Sent Events, with `initialize`, `tools/list` and `tools/call`.
 
 | MCP server | Tools |
 |---|---|
 | `acme-crm` | `list_tickets`, `read_ticket`, `reply_ticket`, `send_newsletter` |
 | `acme-invoices` | `list_due_invoices`, `read_invoice` |
-| `acme-payments` | `refund`, `pay_invoice`, `wire_transfer` |
+| `acme-payments` | `pay_invoice`, `wire_transfer` |
+| `acme-refunds` | `refund` |
 | `acme-cms` | `publish_post` |
 
 They are registered with ArmorIQ through `armoriq.yaml` + `armoriq register`, and protected by a bearer token. Only ArmorIQ's proxy, which receives the token per call from the SDK, can call them. The agent never calls an MCP server directly: every call is `ArmorIQClient.invoke()`, and **ArmorIQ's proxy forwards it to the MCP server** only after verification.
