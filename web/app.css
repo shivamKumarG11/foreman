@@ -340,3 +340,10 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .arena-card .doc,.arena-card .vm{border-color:#6B4A33}
 .arena-card .upload{color:#F6E7D6;border-color:rgba(246,231,214,.5)}
 .arena-card #arenaResult p{color:#F6E7D6}
+
+/* KPI icons */
+.kpi{align-items:center}
+.kic{width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 8px 16px -10px rgba(0,0,0,.45)}
+.kpi.ok .kic{background:var(--ok)}
+.kpi.wait .kic{background:#E9A90E}
+.kpi.no .kic{background:var(--no)}
