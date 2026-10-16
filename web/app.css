@@ -290,3 +290,18 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .steps .card p{color:#3D2E14}
 .steps .num{background:var(--ink);color:#FFD84A}
 .steps .chip.ok{background:#fff}.steps .chip.no{background:#fff}.steps .chip.wait{background:#fff}
+
+/* deep, saturated accents (user: "pure and deep everywhere") */
+.card.tint-yellow{background:#FFD84A;border-color:#F2C21B}
+.card.tint-yellow p,.card.tint-yellow .slices .tools,.card.tint-yellow li.empty{color:#3D2E14}
+.card.tint-yellow .slices .hash{color:#5C4413}
+.card.tint-yellow .tag{background:#fff;color:#8A5A00}
+.card.tint-green{background:#34C77B;border-color:#22A866}
+.card.tint-green h3{color:#0B2A1A}
+.card.tint-green p.muted{color:#0E3B25}
+.card.tint-green .tag{background:#fff;color:#14714A}
+.card.tint-green .inbox details{background:#fff;border-color:#22A866}
+.chip-btn{background:#34C77B;border-color:#22A866;color:#0B2A1A}
+.chip-btn:hover{background:#2DB86F}
+.chip-btn small{color:#0E3B25}
+.chip-btn[aria-pressed=true]{border-color:#0B2A1A;box-shadow:0 0 0 3px #A8EBC8}
