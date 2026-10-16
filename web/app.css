@@ -347,3 +347,5 @@ main section{padding:72px max(16px,calc((100vw - 1240px)/2))}
 .kpi.ok .kic{background:var(--ok)}
 .kpi.wait .kic{background:#E9A90E}
 .kpi.no .kic{background:var(--no)}
+
+.asker{font-weight:600;color:#3D2E14;background:rgba(255,255,255,.5);border-radius:999px;padding:9px 14px}
