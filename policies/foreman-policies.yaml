@@ -1,0 +1,99 @@
+apiVersion: armor.io/v1
+kind: Policy
+metadata:
+  name: foreman-payments-need-approval
+  orgId: 5e7bc3f7-fd86-4f70-868b-feac25a1ec72
+  targetType: mcp_server
+  targetId: 78553455-6179-43ad-a109-8eea9bf6ac49
+spec:
+  priority: 200
+  defaultEnforcementAction: block
+  memberRules:
+    '*':
+      allowedTools:
+        - pay_invoice
+      enforcementAction: allow_log
+      toolEnforcement:
+        wire_transfer: block
+      amountThreshold:
+        maxPerTransaction: 20000
+        requireApprovalAbove: 5000
+        currency: USD
+    raj@acme.coffee:
+      allowedTools:
+        - pay_invoice
+      enforcementAction: block
+      toolEnforcement:
+        pay_invoice: block
+        wire_transfer: block
+    fe1d3908-2024-44b9-ad91-0744ce3ebb81:
+      allowedTools:
+        - '*'
+      amountThreshold:
+        maxPerTransaction: 1000000
+        currency: USD
+  clientRules: {}
+---
+apiVersion: armor.io/v1
+kind: Policy
+metadata:
+  name: foreman-refunds-capped
+  orgId: 5e7bc3f7-fd86-4f70-868b-feac25a1ec72
+  targetType: mcp_server
+  targetId: 9d29dc90-e4a5-4d45-886a-a6234b488182
+spec:
+  priority: 200
+  defaultEnforcementAction: block
+  memberRules:
+    '*':
+      allowedTools:
+        - refund
+      enforcementAction: allow_log
+      amountThreshold:
+        maxPerTransaction: 50
+        currency: USD
+    raj@acme.coffee:
+      allowedTools:
+        - refund
+      enforcementAction: block
+      toolEnforcement:
+        refund: block
+    fe1d3908-2024-44b9-ad91-0744ce3ebb81:
+      allowedTools:
+        - '*'
+      amountThreshold:
+        maxPerTransaction: 1000000
+        currency: USD
+  clientRules: {}
+---
+apiVersion: armor.io/v1
+kind: Policy
+metadata:
+  name: foreman-crm-no-mass-email
+  orgId: 5e7bc3f7-fd86-4f70-868b-feac25a1ec72
+  targetType: mcp_server
+  targetId: 34e7180b-b00f-4d7a-97a0-be5cdaac26b5
+spec:
+  priority: 200
+  defaultEnforcementAction: block
+  memberRules:
+    '*':
+      allowedTools:
+        - list_tickets
+        - read_ticket
+        - reply_ticket
+      enforcementAction: allow_log
+      toolEnforcement:
+        send_newsletter: block
+    raj@acme.coffee:
+      allowedTools:
+        - list_tickets
+        - read_ticket
+      enforcementAction: allow_log
+      toolEnforcement:
+        reply_ticket: block
+        send_newsletter: block
+    fe1d3908-2024-44b9-ad91-0744ce3ebb81:
+      allowedTools:
+        - '*'
+  clientRules: {}

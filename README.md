@@ -103,7 +103,7 @@ Uses `armoriq-sdk` 0.6.10 (Python), only public SDK calls:
 - **Holds.** `PolicyHoldException` → `create_delegation_request()` → the manager approves (in Foreman's Approval Inbox, or in the ArmorIQ dashboard) → the call is retried with the approved delegation, mirroring `invoke_with_policy()`.
 - **Per-user policy.** Each call carries the requester's email (`priya@acme.coffee` or `raj@acme.coffee`), so the same request can be allowed for the manager and blocked for the intern.
 - **Home page envelopes are real checks too.** Each envelope you throw at the 3D crew is sent to ArmorIQ's proxy in enforce-only mode (`ArmorIQSession.enforce`) against that worker's signed slice. The verdict on screen is ArmorIQ's, and nothing is executed.
-- **Policies** live in ArmorIQ (Policy Studio), not in our code: deny `wire_transfer` and `send_newsletter`, cap refunds, hold payments above $5,000, intern read-only.
+- **Policies** live in ArmorIQ (imported from [`policies/foreman-policies.yaml`](policies/foreman-policies.yaml), shown in the console), not in our code: deny `wire_transfer` and `send_newsletter`, cap refunds, hold payments above $5,000, intern read-only.
 
 ### Why one token per worker, and why plan first
 
