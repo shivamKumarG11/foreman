@@ -255,6 +255,39 @@ async def transcribe(request: Request) -> dict:
     return {"text": text, "by": "ElevenLabs Scribe"}
 
 
+class ProbeRequest(BaseModel):
+    worker: str
+    tool: str
+    args: dict = {}
+
+
+_probe = None
+_probe_hits: dict[str, deque] = {}
+
+
+@app.post("/api/probe")
+def probe(body: ProbeRequest, request: Request) -> dict:
+    """Home page envelopes: a real ArmorIQ decision for one tool call, checked but never run."""
+    global _probe
+    ip = request.client.host if request.client else "?"
+    q = _probe_hits.setdefault(ip, deque())
+    now = time.time()
+    while q and now - q[0] > 3600:
+        q.popleft()
+    if len(q) >= 120:
+        raise HTTPException(429, "Easy there! Try again in a bit.")
+    q.append(now)
+    if body.worker not in agent.WORKERS:
+        raise HTTPException(400, "unknown worker")
+    if _probe is None:
+        from .armor import Probe
+        _probe = Probe({w: v["catalog"] for w, v in agent.WORKERS.items()})
+    try:
+        return _probe.decide(body.worker, body.tool, body.args)
+    except Exception as exc:
+        raise HTTPException(502, f"ArmorIQ check failed: {exc}"[:200])
+
+
 @app.get("/api/config")
 def config() -> dict:
     return {"voice": voice.enabled()}

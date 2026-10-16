@@ -175,3 +175,40 @@ def wait_for_decision(client_status: Callable[[str], str], delegation_id: str, l
             pass
         time.sleep(2.0)
     return "timeout"
+
+
+class Probe:
+    """Real ArmorIQ decisions for single tool calls, without running them.
+
+    Used by the home page's envelopes. Each worker's slice is signed once (capture_plan ->
+    get_intent_token inside an ArmorIQ session) and every envelope is checked by ArmorIQ's
+    proxy in enforce-only mode, so the answer is ArmorIQ's, and the sandbox is never touched.
+    """
+
+    def __init__(self, slices: dict[str, list[str]], user_email: str = "priya@acme.coffee"):
+        from armoriq_sdk.session import SessionOptions
+
+        self._opts = SessionOptions
+        self.client = _client()
+        self.user_email = user_email
+        self.slices = slices
+        self.sessions: dict[str, tuple[Any, float]] = {}
+
+    def _session(self, worker: str):
+        s, expires = self.sessions.get(worker, (None, 0.0))
+        if s is None or time.time() > expires - 60:
+            s = self.client.for_user(self.user_email).start_session(self._opts(mode="proxy", validity_seconds=900))
+            calls = [{"name": f"{mcp_servers.armoriq_name(mcp_servers.TOOL_SERVER[t])}__{t}", "args": {}} for t in self.slices[worker]]
+            s.start_plan(calls, goal=f"[{worker}] home-page demo slice")
+            self.sessions[worker] = (s, time.time() + 900)
+        return s
+
+    def decide(self, worker: str, tool: str, args: dict) -> dict:
+        if tool not in mcp_servers.TOOL_SERVER:
+            return {"verdict": "blocked", "reason": f"unknown tool '{tool}'"}
+        name = f"{mcp_servers.armoriq_name(mcp_servers.TOOL_SERVER[tool])}__{tool}"
+        r = self._session(worker).enforce(name, args)
+        verdict = {"allow": "allowed", "allow_log": "allowed", "alert": "allowed", "hold": "held"}.get(r.action, "blocked")
+        if r.allowed and verdict == "blocked":
+            verdict = "allowed"
+        return {"verdict": verdict, "reason": r.reason or ("allowed by policy" if verdict == "allowed" else r.action), "policy": r.matched_policy}
